@@ -61,6 +61,20 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
+   def following
+    @title = "Following"
+    @user  = User.find(params[:id])
+    @users = @user.following.paginate(page: params[:page])
+    render 'show_follow'
+  end
+
+  def followers
+    @title = "Followers"
+    @user  = User.find(params[:id])
+    @users = @user.followers.paginate(page: params[:page])
+    render 'show_follow'
+  end
+
 
   private
 
@@ -77,13 +91,19 @@ class UsersController < ApplicationController
       end
     end
 
+    
+
       # Confirms the correct user.
    # Confirms the correct user.
     def correct_user
       @user = User.find(params[:id])
       redirect_to(root_url) unless current_user?(@user)
     end
-
+     # Returns a user's status feed.
+  def feed
+    Micropost.where("user_id IN (:following_ids) OR user_id = :user_id",
+                    following_ids: following_ids, user_id: id)
+  end
     # Confirms an admin user.
     def admin_user
       redirect_to(root_url) unless current_user.admin?
