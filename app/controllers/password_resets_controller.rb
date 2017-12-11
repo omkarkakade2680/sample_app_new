@@ -6,7 +6,7 @@ class PasswordResetsController < ApplicationController
   def new
   end
 
-   def create
+  def create
     @user = User.find_by(email: params[:password_reset][:email].downcase)
     if @user
       @user.create_reset_digest
@@ -18,7 +18,9 @@ class PasswordResetsController < ApplicationController
       render 'new'
     end
   end
-   def update
+  
+
+  def update
     if params[:user][:password].empty?
       # debugger
       @user.errors.add(:password, "can't be empty")
@@ -70,7 +72,7 @@ class PasswordResetsController < ApplicationController
     end
 
     # Checks expiration of reset token.
-   def check_expiration
+    def check_expiration
       if @user.password_reset_expired?
         flash[:danger] = "Password reset has expired."
         redirect_to new_password_reset_url
